@@ -1,0 +1,31 @@
+# n8n 기반 AI 컨텍스트 DB 자동화 파이프라인
+
+## Problem
+조직 내에서 매일 발생하는 수많은 회의록, 제안서, 슬랙(Slack) 논의 내역 등 방대한 문서가 비정형 텍스트 형태로 방치되고 있었습니다. 특정 프로젝트나 이슈에 대한 과거 히스토리를 파악하거나 연관 부서에 필요한 정보를 공유하기 위해 사람들이 직접 문서를 찾아 읽고 정리하는 데 너무 많은 리소스가 소모되는 비효율이 발생했습니다.
+
+## Solution
+노코드(No-code) 자동화 툴인 **n8n**과 **Gemini API**를 결합하여, 문서를 자동으로 수집, 분석, 태깅하여 데이터베이스(DB)화하는 "Zero-Touch Workflow"를 구축했습니다.
+
+1.  **데이터 수집 & 청킹(Chunking):** Slack, Google Docs 등에서 발생하는 비정형 텍스트를 n8n 웹훅(Webhook)을 통해 수집하고, 의미 단위(문장 또는 문단)로 분할합니다.
+2.  **LLM 문맥 분석:** 분할된 텍스트 청크를 Gemini API로 전송하여 주요 키워드 추출, 요약, 그리고 정보가 필요한 **연관 부서**를 자동 추론하도록 프롬프트를 구성했습니다.
+3.  **정형화 및 적재:** AI가 분석한 결과를 구조화된 JSON 형태로 변환하여 노션(Notion) DB 또는 사내 시스템에 자동 적재합니다.
+
+<MermaidDiagram chart={`
+graph TD
+    A[Slack/G-Docs 비정형 데이터] -->|Webhook 수집| B(n8n Workflow 시작)
+    B --> C{Text Chunking}
+    C -->|API Request| D[Gemini API]
+    D -.->|Prompt: 요약/키워드/부서 추출| E[LLM 컨텍스트 분석]
+    E -->|JSON Response| F(데이터 정형화)
+    F --> G[(Notion / Context DB 적재)]
+    G --> H[관련 부서 자동 알림]
+
+    style A fill:#4f46e5,stroke:#333,stroke-width:2px,color:#fff
+    style D fill:#7c3aed,stroke:#333,stroke-width:2px,color:#fff
+    style G fill:#059669,stroke:#333,stroke-width:2px,color:#fff
+`} />
+
+## Result
+*   **검색 및 공유 비용 제로화:** 담당자가 직접 문서를 요약하고 태깅하는 작업 시간이 100% 절감되었습니다.
+*   **사일로(Silo) 타파:** Gemini가 문맥을 파악하여 관련 부서(예: 영업팀 논의를 프로덕트 팀에 자동 공유)를 지정해 줌으로써 부서 간 정보 비대칭이 해소되었습니다.
+*   **지식 자산화:** 버려지던 텍스트 데이터가 언제든 검색 가능한 정형화된 회사의 자산(Context DB)으로 전환되었습니다.
