@@ -37,7 +37,7 @@ export function MainNav() {
           Projects
         </Link>
         <Link
-          href="/#about"
+          href="/about"
           className={cn(
             "transition-colors hover:text-foreground/80",
             pathname?.startsWith("/about")
