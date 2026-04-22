@@ -1,4 +1,7 @@
+"use client";
 import Link from "next/link"
+import { motion, AnimatePresence } from "framer-motion"
+import { useEffect, useState } from "react"
 import { ArrowRight, BarChart3, Database, Network } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
@@ -10,29 +13,109 @@ import {
 } from "@/components/ui/card"
 
 export default function Home() {
+  const typingTexts = [
+    "ML 기반 매출 예측 (R² 97.8%)",
+    "n8n 업무 자동화 파이프라인 구축",
+    "AppSheet 기반 CRM 시스템 설계"
+  ];
+
+  const [currentTextIndex, setCurrentTextIndex] = useState(0);
+
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      setCurrentTextIndex((prevIndex) => (prevIndex + 1) % typingTexts.length);
+    }, 3000); // Change text every 3 seconds
+
+    return () => clearInterval(intervalId);
+  }, [typingTexts.length]);
   return (
     <div className="container mx-auto max-w-7xl px-4 md:px-8 py-8">
+
+      {/* Animated Background */}
+      <div className="absolute inset-0 -z-10 overflow-hidden opacity-20 pointer-events-none">
+        <motion.div
+          className="absolute inset-0"
+          style={{
+            backgroundImage: 'radial-gradient(circle at 2px 2px, rgba(99, 102, 241, 0.4) 1px, transparent 0)',
+            backgroundSize: '40px 40px',
+          }}
+          animate={{
+            y: [0, -40],
+            opacity: [0.3, 0.6, 0.3],
+          }}
+          transition={{
+            y: {
+              repeat: Infinity,
+              duration: 20,
+              ease: "linear",
+            },
+            opacity: {
+              repeat: Infinity,
+              duration: 5,
+              ease: "easeInOut",
+            }
+          }}
+        />
+      </div>
+
       {/* Hero Section */}
-      <section className="py-12 md:py-24 space-y-6">
-        <div className="inline-block rounded-lg bg-muted px-3 py-1 text-sm text-primary font-medium">
+      <section className="py-12 md:py-32 space-y-8 relative">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="inline-block rounded-lg bg-indigo-500/10 border border-indigo-500/20 px-3 py-1 text-sm text-indigo-400 font-medium"
+        >
           Business Architect & Data Strategist
-        </div>
-        <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-foreground max-w-3xl leading-tight">
-          데이터와 AI로 비즈니스의 <span className="text-primary">비효율</span>을 해결합니다.
-        </h1>
-        <p className="text-xl text-muted-foreground max-w-2xl leading-relaxed">
-          데이터 파이프라인 구축부터 ML 기반 예측 모델링, 자동화 툴을 활용한 워크플로우 개선까지. 기술적 깊이와 비즈니스 통찰력을 결합하여 측정 가능한 임팩트를 만듭니다.
-        </p>
-        <div className="pt-4 flex gap-4">
-          <Button asChild size="lg">
+        </motion.div>
+
+        <motion.h1
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.1 }}
+          className="text-4xl md:text-6xl font-bold tracking-tight text-foreground max-w-4xl leading-tight"
+        >
+          복잡한 비즈니스 이슈를 데이터로 해체하고 자동화로 해결하는 <span className="text-indigo-500">비즈니스 아키텍트</span> 최윤혁입니다.
+        </motion.h1>
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+          className="text-xl md:text-2xl text-muted-foreground h-16 flex items-start"
+        >
+          <span className="mr-2">I build: </span>
+          <div className="relative flex-1 overflow-hidden h-10">
+            <AnimatePresence mode="wait">
+              <motion.span
+                key={currentTextIndex}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.5 }}
+                className="absolute text-indigo-400 font-semibold"
+              >
+                {typingTexts[currentTextIndex]}
+              </motion.span>
+            </AnimatePresence>
+          </div>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.3 }}
+          className="pt-4 flex gap-4"
+        >
+          <Button asChild size="lg" className="bg-indigo-600 hover:bg-indigo-700 text-white">
             <Link href="#projects">
               View Projects <ArrowRight className="ml-2 h-4 w-4" />
             </Link>
           </Button>
-          <Button variant="outline" size="lg" asChild>
-            <Link href="#about">Contact Me</Link>
+          <Button variant="outline" size="lg" asChild className="border-indigo-500/30 hover:bg-indigo-500/10 text-indigo-400">
+            <Link href="/about">About Me</Link>
           </Button>
-        </div>
+        </motion.div>
       </section>
 
       {/* Impact Widgets */}
